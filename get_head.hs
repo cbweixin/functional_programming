@@ -23,3 +23,30 @@ bmiTell weight height
 calcBmis :: ( RealFloat a ) => [(a,a)] -> [a]
 calcBmis xs = [bmi w h | (w,h) <-xs]
     where bmi weight height = weight / height ^ 2
+
+-- high order function
+-- compare with one hundred
+compareWithHundred :: ( Num a, Ord a ) => a -> Ordering
+compareWithHundred x = compare 100 x
+
+compareWithHundred' :: ( Num a, Ord a ) => a -> Ordering
+compareWithHundred'  = compare 100 
+
+-- function can take a function and return function
+-- apply twice
+applyTwice :: (a -> a ) ->a ->a
+applyTwice f x = f( f x )
+
+-- map 
+--
+map' :: ( a -> b ) ->[a] -> [b]
+map' _ [] = []
+map' f ( x : xs ) = f x : map' f xs
+
+-- filter
+
+filter' :: ( a -> Bool ) -> [a] -> [a] 
+filter' _ [] = []
+filter' p ( x : xs )
+    | p x = x : filter' p xs
+    | otherwise = filter' p xs
