@@ -55,3 +55,31 @@ elementAt list i
 	| otherwise  = error "starting index should from 1"
 
 
+---------------------------------------------------------
+--problem 4 find the number of elements of a list
+--myLength[1,2,3] = 3
+--myLength "aaa,a" = 5
+myLength_1 :: [a] -> Int
+myLength_1 (x:[]) = 1
+myLength_1 (_:xs) = 1 + myLength_1 xs 
+
+-- using accumulator
+myLength_2 :: [a] -> Int
+myLength_2 list = myLength_acc list 0
+	where
+			myLength_acc [] n = n
+			myLength_acc (_:xs) n = myLength_acc xs (n + 1)
+
+-- using fold
+myLength_3 :: [a] -> Int
+myLength_3 = foldl (\acc _ -> acc + 1) 0 
+
+
+---------------------------------------------------------
+-- problem 5, reverse a list
+reverse_1 :: [a] -> [a]
+reverse_1 = foldl(\acc x -> (x:acc)) [] 
+
+-- another way of foldl, more concise
+reverse_2 :: [a] -> [a]
+reverse_2 = foldl(flip (:)) []
