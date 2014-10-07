@@ -83,3 +83,16 @@ reverse_1 = foldl(\acc x -> (x:acc)) []
 -- another way of foldl, more concise
 reverse_2 :: [a] -> [a]
 reverse_2 = foldl(flip (:)) []
+
+
+---------------------------------------------------------
+-- problme 6 palindrome
+isPalindrome_1 :: (Eq a) => [a] -> Bool
+isPalindrome_1 xs = xs == reverse xs
+
+isPalindrome_2 :: (Eq a) => [a] -> Bool
+isPalindrome_2 [] = True
+isPalindrome_2 [x] = True
+isPalindrome_2 xs = head xs == last xs && ( isPalindrome_2 $ tail $ init xs )
+
+
