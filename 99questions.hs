@@ -96,3 +96,64 @@ isPalindrome_2 [x] = True
 isPalindrome_2 xs = head xs == last xs && ( isPalindrome_2 $ tail $ init xs )
 
 
+---------------------------------------------------------
+-- problme 7 flatten a nested list
+data NestedList a = Elem a | List [NestedList a]
+flattern1 :: NestedList a -> [a]
+flattern1 (Elem a) = [a]
+flattern1 (List (x:xs)) = flattern1 x ++ flattern1 (List xs)
+flattern1 (List []) = []
+
+flattern2 :: NestedList a -> [a]
+flattern2 a = flt a []
+  where flt (Elem x) xs = x:xs
+        flt (List (x:ls)) xs = flt x (flt (List ls) xs)
+        flt (List []) xs = xs
+
+{-
+flatten2 :: NestedList a -> [a]
+flatten2 a = flt a []
+  where flt (Elem x)      xs = x:xs
+        flt (List (x:ls)) xs = flt x (flt (List ls) xs)
+        flt (List [])     xs = xs
+-}
+---------------------------------------------------------
+-- problme 8 eliminate consective duplicate list elements 
+compress1 :: Eq a => [a] -> [a]
+compress1 [] = []
+compress1 [x] = [x]
+compress1 (x:xs) 
+  | x == head xs = compress1 xs 
+  | otherwise = x : compress1 xs
+
+{-
+compress2 :: Eq a => [a] -> [a]
+compress2 xs = map head $ group xs
+-}
+
+-- using foldr
+compress3 :: Eq a => [a] -> [a]
+compress3 = foldr skipDups []
+  where  skipDups x [] = [x]
+         skipDups x acc
+          | x == head acc = acc
+          | otherwise = x:acc
+          
+---------------------------------------------------------
+-- problme 9 pack conseutive duplicate elements 
+--
+pack1 :: Eq a => [a] -> [[a]]
+pack1 = foldr packDups []
+  where packDups x [] = [[x]]
+        packDups x (y:acc)
+          | x == (head y) = ((x:y):acc) 
+          | otherwise = [x]: y : acc
+
+---------------------------------------------------------
+-- problme 10 use the result of problem of P09 to implement a so-called
+-- run-length encoding data compression method
+-- example encode "aaabccc" -> [(3,'a'), (1,'b'),(3,'c')]
+--
+encode1 :: Eq a => [a] -> [(Int,a)]
+--encode1 xs = map (\x -> (length x, head x)) $ pack1 xs
+encode1 = map (\x -> (length x, head x)) . pack1 
