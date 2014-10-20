@@ -157,3 +157,16 @@ pack1 = foldr packDups []
 encode1 :: Eq a => [a] -> [(Int,a)]
 --encode1 xs = map (\x -> (length x, head x)) $ pack1 xs
 encode1 = map (\x -> (length x, head x)) . pack1 
+
+---------------------------------------------------------
+-- problme 11 use the result of problem of P09 to implement a so-called
+-- modify run-length encoding
+-- encodemodified "aaaabccaadee"
+-- [Multiple 4 'a', single 'b',.., Multiple 2 'e'] 
+
+data ListItem a = Single a | Multiple Int a deriving (Show)
+encodemodified_1 :: Eq a => [a] -> [ListItem a]
+encodemodified_1  = map encodeHelper . encode1
+    where
+      encodeHelper (1,x) = Single x
+      encodeHelper (n,x) = Multiple n x
