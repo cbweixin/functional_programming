@@ -251,4 +251,10 @@ Example in Haskell:
 [1,1,2,2,3,3]
 Solutions
 -}
+dupli_1 :: [a] -> [a]
+dupli_1 = concatMap (replicate 2)
 
+dupli_2 :: [a] -> [a]
+dupli_2 = foldr helper []
+  --where helper x xs = replicate 2 x ++ xs
+  where helper x xs = x : x : xs
