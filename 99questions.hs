@@ -170,3 +170,85 @@ encodemodified_1  = map encodeHelper . encode1
     where
       encodeHelper (1,x) = Single x
       encodeHelper (n,x) = Multiple n x
+
+
+---------------------------------------------------------
+-- problme 12 
+-- (**) Decode a run-length encoded list.
+
+-- Given a run-length code list generated as specified in problem 11. Construct its uncompressed version.
+
+-- Example in Haskell:
+
+-- P12> decodeModified 
+--        [Multiple 4 'a',Single 'b',Multiple 2 'c',
+--         Multiple 2 'a',Single 'd',Multiple 4 'e']
+-- "aaaabccaadeeee"
+
+decodemodified_1 :: [ListItem a] ->[a] 
+decodemodified_1 = concatMap decodeHelper
+  where
+    decodeHelper (Single x) = [x]
+    decodeHelper (Multiple 2 x) = [x] ++  decodeHelper (Single x)
+    -- notice the (n-1) , you can never missing the bracket '()', otherwise you could 
+    -- get error
+    decodeHelper (Multiple n x) = [x] ++  decodeHelper (Multiple (n-1) x)
+
+-- a more elegant way by using built-in 'replicate' function
+decodemodified_2 :: [ListItem a] ->[a] 
+decodemodified_2 = concatMap decodeHelper
+  where
+    decodeHelper (Single x) = [x]
+    decodeHelper (Multiple n x) = replicate n x
+
+-- a navie way by using foldl
+decodemodified_3 :: [ListItem a] ->[a] 
+decodemodified_3 = foldl(\x y->x ++ decodeHelper y)[]
+  where
+    decodeHelper (Single x) = [x]
+    decodeHelper (Multiple n x) = replicate n x
+
+{- problem 13
+(**) Run-length encoding of a list (direct solution).
+
+Implement the so-called run-length encoding data compression method directly. I.e. don't explicitly create the sublists containing the duplicates, as in problem 9, but only count them. As in problem P11, simplify the result list by replacing the singleton lists (1 X) by X.
+
+Example:
+
+* (encode-direct '(a a a a b c c a a d e e e e))
+((4 A) B (2 C) (2 A) D (4 E))
+Example in Haskell:
+
+P13> encodeDirect "aaaabccaadeeee"
+[Multiple 4 'a',Single 'b',Multiple 2 'c',
+ Multiple 2 'a',Single 'd',Multiple 4 'e']
+-}
+encode_2 :: Eq a => [a] -> [(Int,a)]
+encode_2 = foldr helper [] 
+  where 
+    helper x [] = [(1,x)]
+    helper x (y@(a,b):ys)
+           | x == b = (1+a,x):ys
+           | otherwise = (1,x):y:ys
+
+encodeDirect_1 :: Eq a => [a]->[ListItem a]
+encodeDirect_1 = map encodeHelper . encode_2
+  where 
+    encodeHelper (1,x) = Single x
+    encodeHelper (n,x) = Multiple n x
+
+{-
+4 Problem 14
+(*) Duplicate the elements of a list.
+
+Example:
+
+* (dupli '(a b c c d))
+(A A B B C C C C D D)
+Example in Haskell:
+
+> dupli [1, 2, 3]
+[1,1,2,2,3,3]
+Solutions
+-}
+
