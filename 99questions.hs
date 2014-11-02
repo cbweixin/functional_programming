@@ -1,3 +1,5 @@
+import Debug.Trace
+
 -- problem 1 find the last element of a list
 tail' :: [a] -> a
 tail' [] =  error " can not call tail on an empty list "
@@ -258,3 +260,68 @@ dupli_2 :: [a] -> [a]
 dupli_2 = foldr helper []
   --where helper x xs = replicate 2 x ++ xs
   where helper x xs = x : x : xs
+
+
+{-
+5 Problem 15
+(**) Replicate the elements of a list a given number of times.
+
+Example:
+
+* (repli '(a b c) 3)
+(A A A B B B C C C)
+Example in Haskell:
+
+> repli "abc" 3
+"aaabbbccc"
+-}
+
+repli_1 :: [a]->Int->[a]
+repli_1 xs n = concatMap (replicate n) xs
+
+{-
+6 Problem 16
+(**) Drop every N'th element from a list.
+
+Example:
+
+* (drop '(a b c d e f g h i k) 3)
+(A B D E G H K)
+Example in Haskell:
+
+*Main> dropEvery "abcdefghik" 3
+"abdeghk"
+-}
+dropEvery :: [a] -> Int -> [a]
+dropEvery [] _ = []
+dropEvery (x:xs) n = dropHelper (x:xs) n 1
+  where dropHelper (x:xs) n i = ( if ( n `divides` i ) 
+                  then []
+                  else [x] ) 
+                  ++ ( dropHelper xs n (i+1) )
+        dropHelper [] _ _ = []
+        divides x y = y `mod` x == 0
+
+{-
+dropEvery1 :: [a] -> Int -> [a]
+dropEvery1 list count = helper list count count
+  where helper [] _ _ = []
+        helper (x:xs) count 1 = helper xs count count
+        helper (x:xs) count n = x : (helper xs count (n - 1))
+-}
+
+{-
+dropEvery1 :: [a] -> Int -> [a]
+dropEvery1 list n = helper list n n
+  where helper [] _ _ = []
+        helper (x:xs) n 1 = helper xs n n
+        helper (x:xs) n i = x : (helper xs n (i - 1))
+-}
+
+dropEvery1 :: (Show a) => [a] -> Int -> [a]
+--dropEvery1 ::  [a] -> Int -> [a]
+dropEvery1 list n =  trace("list : " ++ show list ) $ helper list n n
+  where helper [] _ _ = []
+        helper (x:xs) n 1 = trace(" : xs: " ++ show xs) $  helper xs n n
+        helper (x:xs) n i = x : (helper xs n (i - 1))
+
