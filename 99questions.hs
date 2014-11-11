@@ -325,3 +325,132 @@ dropEvery1 list n =  trace("list : " ++ show list ) $ helper list n n
         helper (x:xs) n 1 = trace(" : xs: " ++ show xs) $  helper xs n n
         helper (x:xs) n i = x : (helper xs n (i - 1))
 
+{-
+(*) Split a list into two parts; the length of the first part is given.
+
+Do not use any predefined predicates.
+
+Example:
+
+* (split '(a b c d e f g h i k) 3)
+( (A B C) (D E F G H I K))
+Example in Haskell:
+
+*Main> split "abcdefghik" 3
+
+("abc", "defghik")
+-}
+
+split1 :: [a] -> Int -> ([a], [a])
+split1 xs n = ( take n xs, drop n xs )
+
+-- pattern matching, I'm not very used to this
+-- kind of code
+split2 :: (Show a) => [a] -> Int -> ([a], [a])
+split2 [] _ = ([], [])
+split2 l@(x:xs) n 
+      | n > 0 = trace(": x : " ++ show x ++ ": ys : " ++ show ys ++ " : zs : " ++ show zs) $ ( x : ys, zs )
+      | otherwise = trace(" : l : " ++ show l ) $  ([],l)
+    where (ys, zs) = trace( " : xs : " ++ show xs ++ show (n-1) ) $ split2 xs (n-1)
+
+
+{-
+(**) Extract a slice from a list.
+
+Given two indices, i and k, the slice is the list containing the elements between the i'th and k'th element of the original list (both limits included). Start counting the elements with 1.
+
+Example:
+
+* (slice '(a b c d e f g h i k) 3 7)
+(C D E F G)
+Example in Haskell:
+
+*Main> slice ['a','b','c','d','e','f','g','h','i','k'] 3 7
+"cdefg"
+-}
+slice1 :: [a]->Int->Int->[a]
+slice1 [] _ _ = []
+slice1 xs i j   
+  | i <= j = reverse $ drop (length xs - j) $ reverse $ drop (i-1) xs
+  | otherwise = error " can not slice "
+
+
+-- solution 2, kind of like loop, "helper xs i j k" k is the loop index
+slice2 :: [a] -> Int -> Int -> [a]
+slice2 [] _ _ = []
+slice2 (x:xs) i j 
+  | i > j = error " can not slice "
+  | otherwise = helper (x:xs) i j 1
+    where helper [] _ _ _ = []
+          helper (x:xs) i j k 
+            | k<i = helper xs i j (k+1)
+            | k>j = helper xs i j j 
+            | otherwise = [x] ++ helper xs i j (k+1)
+
+-- solution 3 iterative solution
+slice3 :: [a] -> Int -> Int -> [a]
+slice3 [] _ _ = []
+slice3 (x:xs) i j
+  | i > 1 = slice3 xs (i-1) (j-1)
+  | j < 1 = []
+  | otherwise = x : slice3 xs (i-1) (j-1)
+
+
+{-
+9 Problem 19
+(**) Rotate a list N places to the left.
+
+Hint: Use the predefined functions length and (++).
+
+Examples:
+
+* (rotate '(a b c d e f g h) 3)
+(D E F G H A B C)
+
+* (rotate '(a b c d e f g h) -2)
+(G H A B C D E F)
+Examples in Haskell:
+
+*Main> rotate ['a','b','c','d','e','f','g','h'] 3
+"defghabc"
+ 
+*Main> rotate ['a','b','c','d','e','f','g','h'] (-2)
+"ghabcdef"
+-}
+rotate1 :: [a] -> Int -> [a]
+rotate1 [] _ = []
+rotate1 xs i
+  | i > 0 = (slice3 xs (i+1) len) ++ (slice3 xs 1 i)
+  | otherwise = (slice3 xs (len + i +1) len) ++ (slice3 xs 1 (len + i)) 
+  where len = length xs
+
+
+rotate2 :: [a] -> Int -> [a]
+rotate2 [] _ = []
+rotate2 xs 0 = xs
+rotate2 (x:xs) n = rotate2 (xs ++ [x]) (n-1)
+rotate2 xs n = rotate2 xs (length xs + n )
+
+
+{-
+10 Problem 20
+(*) Remove the K'th element from a list.
+
+Example in Prolog:
+
+?- remove_at(X,[a,b,c,d],2,R).
+X = b
+R = [a,c,d]
+Example in Lisp:
+
+* (remove-at '(a b c d) 2)
+(A C D)
+(Note that this only returns the residue list, while the Prolog version also returns the deleted element.)
+
+Example in Haskell:
+
+*Main> removeAt 2 "abcd"
+('b',"acd")
+-}
+removeAt1 :: Int->[a]->(a,[a])
+removeAt1 n xs = (xs!!(n-1), take (n-1) xs ++ drop n xs )
