@@ -454,3 +454,60 @@ Example in Haskell:
 -}
 removeAt1 :: Int->[a]->(a,[a])
 removeAt1 n xs = (xs!!(n-1), take (n-1) xs ++ drop n xs )
+
+{-
+1 Problem 21
+Insert an element at a given position into a list.
+
+Example:
+
+* (insert-at 'alfa '(a b c d) 2)
+(A ALFA B C D)
+Example in Haskell:
+
+P21> insertAt 'X' "abcd" 2
+"aXbcd"
+-}
+insertAt1 :: a->[a]->Int->[a]
+insertAt1 x xs n = take (n-1) xs ++ [x] ++ drop (n-1) xs
+
+{-
+2 Problem 22
+Create a list containing all integers within a given range.
+
+Example:
+
+* (range 4 9)
+(4 5 6 7 8 9)
+Example in Haskell:
+
+Prelude> range 4 9
+[4,5,6,7,8,9]
+-}
+
+range1 :: Int->Int->[Int]
+range1 m n  
+  | m <= n  = [m] ++ range1 (m+1) n
+  | otherwise = []
+
+range2 :: Int->Int->[Int]
+range2 m n  
+  | m == n  = [m] 
+  | m < n  = m : range2 (m+1) n
+  | m > n =  n : range2 m (n+1)
+
+{-
+3 Problem 23
+Extract a given number of randomly selected elements from a list.
+
+Example:
+
+* (rnd-select '(a b c d e f g h) 3)
+(E D A)
+Example in Haskell:
+
+Prelude System.Random>rnd_select "abcdefgh" 3 >>= putStrLn
+eda
+-}
+
+
