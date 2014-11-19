@@ -14,12 +14,13 @@ Prelude System.Random>rnd_select "abcdefgh" 3 >>= putStrLn
 eda
 -}
 import System.Random
+import Data.List(nub)
 
-rnd_select :: [a] -> Int -> IO [a]
+rnd_select :: (Eq a) => [a] -> Int -> IO [a]
 rnd_select [] _ = return []
 rnd_select xs n 
   | n < 0 = error "N must be greater than zero"
   | otherwise = do gen <- getStdGen 
-                   return $ take n [xs !! x | x <- randomRs (0, (length xs) -1) gen] 
+                   return $ take n $ nub $ [xs !! x | x <- randomRs (0, (length xs) -1) gen] 
 
 

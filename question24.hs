@@ -13,8 +13,8 @@ Prelude System.Random>[23,1,17,33,21,37]
 -}
 import System.Random
 
-rnd_select :: Int -> Int -> IO [Int]
-rnd_select m n = do 
+diff_select :: Int -> Int -> IO [Int]
+diff_select m n = do 
     gen <- getStdGen
     return $ take m (randomRs (1,n) gen) 
 
