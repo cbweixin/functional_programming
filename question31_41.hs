@@ -93,3 +93,87 @@ totient1 a = length [x|x <- [1..a-1] , coprime a x]
 
 totient2 :: Int -> Int
 totient2 a = length $ filter (coprime a) [1..a-1]
+
+{-
+6 Problem 35
+(**) Determine the prime factors of a given positive integer. Construct a flat list containing the prime factors in ascending order.
+
+Example:
+
+* (prime-factors 315)
+(3 3 5 7)
+Example in Haskell:
+
+> primeFactors 315
+[3, 3, 5, 7]
+-}
+
+primeFactors :: Int -> [Int]
+--primeFactors a = filter isPrime [x|x<-[3..a-1], a `mod` x == 0] 
+-- please notice the let .. in expression indentation
+-- f' = must be indented with (f,f1) =
+-- it should be looked like 
+-- let a = 
+--     b = 
+--     c=
+-- in. .    
+primeFactors a = let (f, f1) = factorPairOf a
+                     f' = [f] 
+                     f1' = if isPrime f1 then [f1] else primeFactors f1
+                 in f' ++ f1'
+   -- where is a clause of let, it could not be aligned with 'p' in 'primeFactors'
+   where 
+   factorPairOf a = let f = head $ factors $ a 
+                       in (f, a `div` f)
+   factors a = filter isPrime [x|x <- [3..a-1], a `mod` x == 0]
+
+
+-- we can using explict structure instead indentation block
+-- by using curly brackt { and semicolon ;
+primeFactors1 :: Int -> [Int]
+primeFactors1 a = let { (f, f1) = factorPairOf a;
+                          f' = [f]; 
+                          f1' = if isPrime f1 then [f1] else primeFactors f1;
+                      }
+                 in f' ++ f1'
+   -- where is a clause of let, it could not be aligned with 'p' in 'primeFactors'
+   where 
+   factorPairOf a = let f = head $ factors $ a 
+                       in (f, a `div` f)
+   factors a = filter isPrime [x|x <- [3..a-1], a `mod` x == 0]
+
+{-
+Problem 36
+(**) Determine the prime factors of a given positive integer.
+
+Construct a list containing the prime factors and their multiplicity.
+
+Example:
+
+* (prime-factors-mult 315)
+((3 2) (5 1) (7 1))
+Example in Haskell:
+
+*Main> prime_factors_mult 315
+[(3,2),(5,1),(7,1)]
+-}
+packList :: [Int] -> [(Int,Int)]
+packList = foldr helper [] 
+  where helper x [] = [(x ,1)] 
+        helper x (y@(a,b):ys)
+               | x == a = (a,1+b) : ys  
+               | otherwise = (x,1) : y : ys
+
+prime_factors_mult :: Int -> [(Int, Int)] 
+prime_factors_mult  = packList . primeFactors 
+{-
+8 Problem 37
+(**) Calculate Euler's totient function phi(m) (improved).
+
+See problem 34 for the definition of Euler's totient function. If the list of the prime factors of a number m is known in the form of problem 36 then the function phi(m) can be efficiently calculated as follows: Let ((p1 m1) (p2 m2) (p3 m3) ...) be the list of prime factors (and their multiplicities) of a given number m. Then phi(m) can be calculated with the following formula:
+
+phi(m) = (p1 - 1) * p1 ** (m1 - 1) * 
+         (p2 - 1) * p2 ** (m2 - 1) * 
+         (p3 - 1) * p3 ** (m3 - 1) * ...
+Note that a ** b stands for the b'th power of a.
+-}

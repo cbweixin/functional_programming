@@ -225,15 +225,15 @@ P13> encodeDirect "aaaabccaadeeee"
 [Multiple 4 'a',Single 'b',Multiple 2 'c',
  Multiple 2 'a',Single 'd',Multiple 4 'e']
 -}
-encode_2 :: Eq a => [a] -> [(Int,a)]
+encode_2 :: (Eq a, Show a) => [a] -> [(Int,a)]
 encode_2 = foldr helper [] 
   where 
     helper x [] = [(1,x)]
     helper x (y@(a,b):ys)
-           | x == b = (1+a,x):ys
-           | otherwise = (1,x):y:ys
+           | x == b = trace("x : " ++ show x ++ " b : " ++ show b ) $ (1+a,x):ys
+           | otherwise = trace(" x : " ++ show x ) $ (1,x):y:ys
 
-encodeDirect_1 :: Eq a => [a]->[ListItem a]
+encodeDirect_1 :: (Eq a, Show a)=> [a]->[ListItem a]
 encodeDirect_1 = map encodeHelper . encode_2
   where 
     encodeHelper (1,x) = Single x
