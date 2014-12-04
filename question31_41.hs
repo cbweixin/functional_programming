@@ -166,6 +166,7 @@ packList = foldr helper []
 
 prime_factors_mult :: Int -> [(Int, Int)] 
 prime_factors_mult  = packList . primeFactors 
+
 {-
 8 Problem 37
 (**) Calculate Euler's totient function phi(m) (improved).
@@ -176,4 +177,84 @@ phi(m) = (p1 - 1) * p1 ** (m1 - 1) *
          (p2 - 1) * p2 ** (m2 - 1) * 
          (p3 - 1) * p3 ** (m3 - 1) * ...
 Note that a ** b stands for the b'th power of a.
+phi :: Int -> Int
+phi p =  foldr1 (\x@(a,b) acc -> (a-1) * a ** (b-1) * acc ) (prime_factors_mult p)
 -}
+
+phi :: Int -> Int
+phi m = product [(p-1) * p ^ (c-1) | (p,c) <- prime_factors_mult m]
+
+
+{-
+10 Problem 39
+(*) A list of prime numbers.
+
+Given a range of integers by its lower and upper limit, construct a list of all prime numbers in that range.
+
+Example in Haskell:
+
+P29> primesR 10 20
+[11,13,17,19]
+-}
+
+primesR :: Int -> Int  -> [Int]
+primesR a b = filter isPrime [a..b]
+
+{-
+11 Problem 40
+(**) Goldbach's conjecture.
+
+Goldbach's conjecture says that every positive even number greater than 2 is the sum of two prime numbers. Example: 28 = 5 + 23. It is one of the most famous facts in number theory that has not been proved to be correct in the general case. It has been numerically confirmed up to very large numbers (much larger than we can go with our Prolog system). Write a predicate to find the two prime numbers that sum up to a given even integer.
+
+Example:
+
+* (goldbach 28)
+(5 23)
+Example in Haskell:
+
+*goldbach 28
+(5, 23)
+-}
+
+goldbach :: Int -> (Int,Int)
+goldbach a =  head [(x,y)|x<-[1..a-1], y<-[1..a-1], isPrime x, isPrime y,  x+y == a]
+
+
+goldbach1 :: Int -> (Int,Int)
+goldbach1 a = head [(x,y)| x <- pr, y <- pr, x+y == a]
+  where pr = primesR 2 (a-1) 
+
+
+{-
+12 Problem 41
+(**) Given a range of integers by its lower and upper limit, print a list of all even numbers and their Goldbach composition.
+
+In most cases, if an even number is written as the sum of two prime numbers, one of them is very small. Very rarely, the primes are both bigger than say 50. Try to find out how many such cases there are in the range 2..3000.
+
+Example:
+
+* (goldbach-list 9 20)
+10 = 3 + 7
+12 = 5 + 7
+14 = 3 + 11
+16 = 3 + 13
+18 = 5 + 13
+20 = 3 + 17
+* (goldbach-list 1 2000 50)
+992 = 73 + 919
+1382 = 61 + 1321
+1856 = 67 + 1789
+1928 = 61 + 1867
+Example in Haskell:
+
+*Exercises> goldbachList 9 20
+[(3,7),(5,7),(3,11),(3,13),(5,13),(3,17)]
+*Exercises> goldbachList' 4 2000 50
+[(73,919),(61,1321),(67,1789),(61,1867)]
+-}
+goldbachList  :: Int -> Int -> [(Int, Int)]
+goldbachList a b = foldr helper [] (getEven a b)
+  where helper x [] = goldbach1 x : [] 
+        helper x xs = goldbach1 x : xs
+        getEven a b = [x|x<-[a..b], x `mod` 2 == 0]
+
