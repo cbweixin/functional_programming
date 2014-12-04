@@ -258,3 +258,7 @@ goldbachList a b = foldr helper [] (getEven a b)
         helper x xs = goldbach1 x : xs
         getEven a b = [x|x<-[a..b], x `mod` 2 == 0]
 
+goldbachList1  :: Int -> Int -> [(Int, Int)]
+goldbachList1 a b = map goldbach1 (getEven a b)
+        where getEven a b = [x|x<-[a..b], x`mod`2 == 0]
+
