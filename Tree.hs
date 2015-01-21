@@ -1,7 +1,8 @@
 module Tree
 (symmetric,
  cbalTree,
- symCbalTree 
+ symCbalTree,
+ makeTrees
  ) where
 
 
@@ -26,3 +27,14 @@ symmetric (Branch _ l r) = mirror l r
         mirror _ _ = False
 
 symCbalTree = filter symmetric . cbalTree  
+
+makeTrees :: a -> Int ->[Tree a]
+makeTrees _ 0 = []
+makeTrees c 1 = [leaf c]
+makeTrees c n = lonly ++ ronly ++ landr
+  where lonly = [Branch c t Empty | t <- smallTree]
+        ronly = [Branch c Empty t | t <- smallTree]
+        landr = concat [[Branch c l r | l <- fst lrtrees, r <- snd lrtrees] | lrtrees <- treeMinusTwo]
+        smallTree = makeTrees c (n-1)
+        treeMinusTwo = [(makeTrees c num, makeTrees c (n-1-num)) | num <- [0..n-2]]
+
